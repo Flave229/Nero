@@ -1,4 +1,6 @@
 ﻿using System;
+using Nero.Discord;
+using Nero.Discord.Data;
 
 namespace Nero
 {
@@ -6,7 +8,9 @@ namespace Nero
 	{
 		static void Main(string[] args)
 		{
-			Console.WriteLine("Hello World!");
+			DiscordService discord = new DiscordService();
+			discord.Connect();
+			discord.PostMessage(new DiscordMessage { content = "Testing Bot" });
 		}
 	}
 }
