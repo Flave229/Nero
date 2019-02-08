@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Nero.DiscordAPI.Data;
 using Newtonsoft.Json;
 
 namespace Nero.DiscordAPI
@@ -10,15 +9,20 @@ namespace Nero.DiscordAPI
 	{
 		public class User
 		{
-			public Task<List<DiscordGuildData>> GetCurrentUserGuilds()
+			public Task<List<Guild>> GetCurrentUserGuilds()
 			{
 				Task<HttpResponseMessage> httpResponseTask = DiscordHttpClient.GetAsync("users/@me/guilds");
 
-				Task<List<DiscordGuildData>> guildDataTask = new Task<List<DiscordGuildData>>(() =>
+				Task<List<Guild>> guildDataTask = new Task<List<Guild>>(() =>
 				{
 					HttpResponseMessage httpResponse = httpResponseTask.Result;
+					if (httpResponse.IsSuccessStatusCode == false)
+					{
+						return new List<Guild>();
+					}
+
 					string response = httpResponse.Content.ReadAsStringAsync().Result;
-					return JsonConvert.DeserializeObject<List<DiscordGuildData>>(response);
+					return JsonConvert.DeserializeObject<List<Guild>>(response);
 				});
 				guildDataTask.Start();
 				return guildDataTask;
