@@ -1,6 +1,8 @@
 ﻿using System;
-using Nero.Discord;
+using System.Collections.Generic;
 using Nero.Discord.Data;
+using Nero.DiscordAPI;
+using Nero.DiscordAPI.Data;
 
 namespace Nero
 {
@@ -8,9 +10,13 @@ namespace Nero
 	{
 		static void Main(string[] args)
 		{
-			DiscordService discord = new DiscordService();
+			DiscordAPI.DiscordClient discord = new DiscordAPI.DiscordClient();
 			discord.Connect();
-			discord.PostMessage(new DiscordMessage { content = "Testing Bot" });
+			DiscordClient.User botUser = discord.GetBotUser();
+			List<DiscordGuildData> guildData = botUser.GetCurrentUserGuilds().Result;
+
+
+			//discord.PostMessage(new DiscordMessage { content = "Testing Bot" });
 		}
 	}
 }
