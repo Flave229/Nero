@@ -34,6 +34,7 @@ namespace Nero.DiscordAPI
 
 					string response = httpResponse.Content.ReadAsStringAsync().Result;
 					List<Message> messages = JsonConvert.DeserializeObject<List<Message>>(response);
+					messages.ForEach((message) => message.Channel = this);
 
 					//Response always ordered with recent at top. So can take ID from first item
 					if (messages.Count > 0)

@@ -1,15 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Nero.Commands;
 using Nero.DiscordAPI;
+using Nero.GameLobby;
 
 namespace Nero
 {
 	class Program
 	{
+		private static GameScheduler _gameScheduler;
+
 		static void Main(string[] args)
 		{
 			// Start a forever task that scans through all the channels
+
 			CancellationToken cancelToken = new CancellationToken();
 			Task discordLoop = DiscordLoop(cancelToken);
 			discordLoop.Wait(cancelToken);
@@ -18,10 +23,14 @@ namespace Nero
 
 		public static Task DiscordLoop(CancellationToken cancellationToken)
 		{
+			// This is the worst - Webhooks!
 			Task discordLoop = new Task(() =>
 			{
 				DiscordClient discord = new DiscordClient();
 				discord.Connect();
+
+				_gameScheduler = new GameScheduler(discord);
+
 				DiscordClient.User botUser = discord.GetBotUser();
 
 				// TODO: We have no webhook yet. We will need to scan the API for any additional guilds the bot has been added to
@@ -41,13 +50,10 @@ namespace Nero
 
 							foreach (DiscordClient.Message message in messages)
 							{
-								if (message.Content.Length >= 2 
-									&& message.Content.Substring(0, 2) == "//")
+								if (_gameScheduler.DoesMessageContainCommandPrefix(message.Content))
 								{
-									channel.SendMessage(new DiscordClient.Message
-									{
-										Content = "I hear you!"
-									});
+									ICommand command = _gameScheduler.HandleCommand(message);
+									command?.Invoke();
 								}
 							}
 						}

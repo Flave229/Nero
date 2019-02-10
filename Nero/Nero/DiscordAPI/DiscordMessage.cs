@@ -11,6 +11,8 @@ namespace Nero.DiscordAPI
 
 			[JsonProperty("content")]
 			public string Content { get; set; }
+
+			public Channel Channel { get; set; }
 		}
 	}
 }
